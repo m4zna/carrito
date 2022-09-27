@@ -3,8 +3,14 @@ class Item {
   final String unit;
   final int price;
   final String image;
+  late final bool selected;
 
-  Item({required this.name, required this.unit, required this.price, required this.image});
+  Item(
+      {required this.name,
+      required this.unit,
+      required this.price,
+      required this.image,
+      required this.selected});
 
   Map toJson() {
     return {
