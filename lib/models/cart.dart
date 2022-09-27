@@ -7,5 +7,4 @@ class Cart {
 
   Cart({required this.items});
 
-  Cart copyWith({List<Item>? items}) => Cart(items: items ?? this.items);
 }
