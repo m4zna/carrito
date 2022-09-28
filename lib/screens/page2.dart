@@ -1,20 +1,83 @@
+import 'package:carrito/models/item_model.dart';
+import 'package:carrito/redux/actions.dart';
+import 'package:carrito/redux/app_state.dart';
+import 'package:carrito/widgets/product_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
-import '../models/cart.dart';
-
-class Page2Screen extends StatefulWidget {
-  const Page2Screen({Key? key}) : super(key: key);
-
-  @override
-  State<Page2Screen> createState() => _Page2ScreenState();
-}
-
-class _Page2ScreenState extends State<Page2Screen> {
+class Page2Screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(title: const Text('Page2Screen')),
-      body: CartInfo(), //Agregar cart
+      appBar: AppBar(
+        title: const Text('Page2Screen'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              StoreProvider.of<AppState>(context).dispatch(RemoveItemsAction());
+            },
+          )
+        ],
+      ),
+
+      body: SafeArea(
+        child: Container(
+          child: StoreConnector<AppState, List<Item>>(
+              converter: (store) => store.state.products,
+              builder: (context, List<Item> allProduct) => Container(
+                    // height: screenHeight,
+                    child: Visibility(
+                      visible: allProduct.isNotEmpty,
+                      child: Container(
+                        child: ListView.builder(
+                            itemBuilder: (BuildContext context, int idx) {
+                          final item = allProduct[idx];
+                          return Container(
+                            margin: EdgeInsets.only(
+                                top: 20, bottom: 20, left: 20, right: 20),
+                            height: 80,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Image(
+                                      height: 80,
+                                      width: 80,
+                                      image: AssetImage(item!.image.toString()),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text('${item.name}'),
+                                  ],
+                                ),
+                                Center(
+                                  child: Container(
+                                    height: 50,
+                                    width: 50,
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.red),
+                                        onPressed: () {
+                                          StoreProvider.of<AppState>(context)
+                                              .dispatch(
+                                                  RemoveItemAction(item!));
+                                        },
+                                        child: Icon(Icons.delete)),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  )),
+        ),
+      ), //Agregar cart
       bottomNavigationBar: InkWell(
         onTap: () {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -41,103 +104,19 @@ class _Page2ScreenState extends State<Page2Screen> {
   }
 }
 
-class CartInfo extends StatelessWidget {
-  final Cart? cart;
+// class CartInfo extends StatelessWidget {
+//   final Cart? cart;
 
-  const CartInfo({super.key, this.cart});
+//   const CartInfo({super.key, this.cart});
 
-  /*final Cart cart;
+//   /*final Cart cart;
 
-  const CartInfo({super.key, required this.cart});*/    //Dejar este...borrar anterio solo esta de ejemplo
+//   const CartInfo({super.key, required this.cart});*/ //Dejar este...borrar anterio solo esta de ejemplo
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ...cart!.items.map((item) => ListView.builder(
-            shrinkWrap: true,
-            itemCount: cart!.items.length,
-            itemBuilder: (context, index) {
-              return Card(
-                color: Colors.blueGrey.shade200,
-                elevation: 5.0,
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Image(
-                        height: 80,
-                        width: 80,
-                        image: AssetImage(item.image),
-                      ),
-                      SizedBox(
-                        width: 130,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 5.0,
-                            ),
-                            RichText(
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              text: TextSpan(
-                                  text: 'Name: ',
-                                  style: TextStyle(
-                                      color: Colors.blueGrey.shade800,
-                                      fontSize: 16.0),
-                                  children: [
-                                    TextSpan(
-                                        text: item.name,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ]),
-                            ),
-                            RichText(
-                              maxLines: 1,
-                              text: TextSpan(
-                                  text: 'Unit: ',
-                                  style: TextStyle(
-                                      color: Colors.blueGrey.shade800,
-                                      fontSize: 16.0),
-                                  children: [
-                                    TextSpan(
-                                        text: item.unit,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ]),
-                            ),
-                            RichText(
-                              maxLines: 1,
-                              text: TextSpan(
-                                  text: 'Price: ' r"$",
-                                  style: TextStyle(
-                                      color: Colors.blueGrey.shade800,
-                                      fontSize: 16.0),
-                                  children: [
-                                    TextSpan(
-                                        text: item.price.toString(),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ]),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.delete,
-                            color: Colors.red.shade800,
-                          )),
-                    ],
-                  ),
-                ),
-              );
-            }))
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//
+//   }
+// }

@@ -5,3 +5,10 @@ class UpdateCartAction {
 
   UpdateCartAction(this.updatedCart);
 }
+
+class RemoveItemAction {
+  final Item item;
+  RemoveItemAction(this.item);
+}
+
+class RemoveItemsAction {}

@@ -7,4 +7,5 @@ class Cart {
 
   Cart({required this.items});
 
+  Cart.initialState() : items = List.unmodifiable(<Item>[]);
 }
